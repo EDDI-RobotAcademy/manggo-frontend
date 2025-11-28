@@ -1,10 +1,14 @@
 "use client";
 
 import { CircleArrowRight } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 export default function Header() {
   const today = new Date().toISOString().split("T")[0];
   const options: string[] = ["YTN", "MBC", "SBS", "KBS"];
+
+  const { isLoggedIn, logout, email } = useAuth();
 
   const handleGoogleLogin = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}${process.env.NEXT_PUBLIC_GOOGLE_LOGIN_PATH}`;
@@ -18,12 +22,24 @@ export default function Header() {
         </h1>
         <div className="flex items-center gap-[0.5rem]">
           <span className="text-xs md:text-sm text-gray-500">{today}</span>
-          <button
-            onClick={handleGoogleLogin}
-            className="bg-blue-600 text-white px-2 py-1 rounded"
-          >
-            Google Login
-          </button>
+          {isLoggedIn ? (
+            <>
+              <span className="text-xs md:text-sm text-gray-500">{email.split("@")[0]}님 환영합니다.</span>
+              <button
+                onClick={logout}
+                className="bg-blue-600 text-white px-2 py-1 rounded"
+              >
+                logout
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleGoogleLogin}
+              className="bg-blue-600 text-white px-2 py-1 rounded"
+            >
+              Google Login
+            </button>
+          )}
         </div>
       </div>
 
