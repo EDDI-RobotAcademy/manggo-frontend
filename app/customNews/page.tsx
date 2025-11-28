@@ -13,6 +13,8 @@ interface Props {
 export default async function CustomNewsPage({ searchParams }: Props) {
   const params: QueryStringType = await searchParams;
 
+
+
   return (
     <MainWrapper searchParams={params}>
       <CustomNews />

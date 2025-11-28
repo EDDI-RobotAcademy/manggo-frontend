@@ -3,9 +3,14 @@
 import React, { useState } from "react";
 import { Upload, ArrowUp } from "lucide-react";
 
+export interface MessageType {
+  text: string;
+  type: string;
+}
+
 export default function CustomNews() {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<MessageType[]>([]);
 
   const handleSend = () => {
     if (message.trim()) {
@@ -25,7 +30,7 @@ export default function CustomNews() {
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -54,11 +59,10 @@ export default function CustomNews() {
                   className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-2xl px-4 py-3 rounded-2xl ${
-                      msg.type === "user"
+                    className={`max-w-2xl px-4 py-3 rounded-2xl ${msg.type === "user"
                         ? "bg-blue-500 text-white"
                         : "bg-gray-100 text-gray-900"
-                    }`}
+                      }`}
                   >
                     {msg.text}
                   </div>
@@ -99,11 +103,10 @@ export default function CustomNews() {
             <button
               onClick={handleSend}
               disabled={!message.trim()}
-              className={`absolute right-3 bottom-2 p-2 rounded-full transition-all ${
-                message.trim()
+              className={`absolute right-3 bottom-2 p-2 rounded-full transition-all ${message.trim()
                   ? "bg-blue-500 text-white hover:bg-blue-600"
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
-              }`}
+                }`}
               aria-label="전송"
             >
               <ArrowUp size={20} />

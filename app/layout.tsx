@@ -1,4 +1,11 @@
+import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
+
+export const metadata = {
+  title: "Manggo AI News",
+  description: "Manggo AI News",
+};
+
 
 export default function RootLayout({
   children,
@@ -7,7 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="overflow-y-hidden">{children}</body>
+      <body className="overflow-y-hidden">
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }
