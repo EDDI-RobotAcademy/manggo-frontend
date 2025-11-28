@@ -1,21 +1,12 @@
 'use client'
 
+import { CustomNewsType } from "@/types/customNewsType";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 
-export interface NewsListType {
-    created_at: string;
-    file_name: string;
-    source_type: string;
-    source_url: string;
-    summary_id: number;
-    summary_text: string;
-    summary_title: string;
-    user_id: string;
-}
 
 export interface NewsPageData {
-    customNewsList: NewsListType[];
+    customNewsList: CustomNewsType[];
     page: number;
     total: number;
     size: number;
@@ -38,8 +29,8 @@ export default function CustomHistory({ dataList }: { dataList: NewsPageData }) 
     }
 
     return (
-        <div className="min-h-screen bg-white p-8">
-            <div className="max-w-4xl mx-auto border border-gray-300">
+        <div className="p-4 max-w-5xl mx-auto">
+            <div className="space-y-2 border">
                 <div className="flex justify-between items-start p-2">
                     <div className="flex-1"></div>
                     <div className="text-right">
