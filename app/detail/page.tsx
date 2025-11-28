@@ -1,5 +1,5 @@
-import NewsList from "@/app/components/NewsList";
 import MainWrapper from "@/app/components/MainWrapper";
+import NewsDetail from "@/app/components/NewsDetail";
 import {QueryStringType} from "@/types/queryStringType";
 
 interface SearchParams {
@@ -10,17 +10,12 @@ interface Props {
     searchParams: Promise<SearchParams>; // Promise 타입!
 }
 
-export default async function Main({ searchParams }: Props) {
-
+export default async function DetailPage({searchParams } : Props) {
     const params: QueryStringType = await searchParams;
-
-    console.log(params)
-
-
 
     return (
         <MainWrapper searchParams={params}>
-            <NewsList />
+            <NewsDetail />
         </MainWrapper>
     )
 }
