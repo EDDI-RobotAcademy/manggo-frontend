@@ -21,3 +21,8 @@ export interface ArticleDetail {
   summary_text?: string | null;
   summary_created_at?: string | null;
 }
+
+export interface CategoryItem {
+  category_id: number;
+  category_name: string;
+}
