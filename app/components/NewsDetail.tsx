@@ -1,8 +1,50 @@
 "use client";
 
 import { ArticleDetail } from "@/types/newsType";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
+export interface RecentlyViewedItem {
+  article_id: number;
+  title: string;
+  category: string | null;
+}
 
 export default function NewsDetail({ article }: { article: ArticleDetail | null }) {
+  const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewedItem[]>([]);
+
+  useEffect(() => {
+    if (!article) return;
+
+    const STORAGE_KEY = "recentlyViewedNews";
+    const MAX_ITEMS = 5;
+
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      let items: RecentlyViewedItem[] = stored ? JSON.parse(stored) : [];
+
+      // Remove current article if it exists (to move it to top)
+      items = items.filter((item) => item.article_id !== article.article_id);
+
+      // Add current article to the top
+      items.unshift({
+        article_id: article.article_id,
+        title: article.title,
+        category: article.category_name?.toLowerCase() || null,
+      });
+
+      // Limit to MAX_ITEMS
+      if (items.length > MAX_ITEMS) {
+        items = items.slice(0, MAX_ITEMS);
+      }
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      setRecentlyViewed(items);
+    } catch (error) {
+      console.error("Failed to update recently viewed items:", error);
+    }
+  }, [article]);
+
   if (!article) {
     return (
       <div className="flex h-full items-center justify-center bg-white text-gray-600">
@@ -105,6 +147,28 @@ export default function NewsDetail({ article }: { article: ArticleDetail | null 
             </div>
           ) : (
             <p className="text-sm text-gray-500">No summary available yet.</p>
+          )}
+
+          {/* Recently Viewed Section */}
+          {recentlyViewed.length > 0 && (
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <h4 className="text-lg font-semibold mb-3 text-gray-900">
+                Recently Viewed
+              </h4>
+              <div className="space-y-2">
+                {recentlyViewed.map((item) => (
+                  <Link
+                    key={item.article_id}
+                    href={`/detail?articleId=${item.article_id}`}
+                    className="block p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <p className="text-sm font-medium text-gray-800 line-clamp-2">
+                      {item.title}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </div>

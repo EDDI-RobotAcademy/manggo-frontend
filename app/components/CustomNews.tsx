@@ -17,29 +17,46 @@ const initialState = {
   isSubmitting: false,
 };
 
-export default function CustomNews({ detailData }: { detailData: CustomNewsType }) {
+export default function CustomNews({
+  detailData,
+}: {
+  detailData: CustomNewsType;
+}) {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<MessageType[]>([]);
 
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [state, formAction] = useActionState(createSummaryFromUrlAction, initialState);
+  const [state, formAction] = useActionState(
+    createSummaryFromUrlAction,
+    initialState,
+  );
 
   const router = useRouter();
 
   useEffect(() => {
     if (detailData) {
       setMessages([
-        { text: detailData.source_type == 'URL' ? detailData.source_url : detailData.file_name, type: "user" },
+        {
+          text:
+            detailData.source_type == "URL"
+              ? detailData.source_url
+              : detailData.file_name,
+          type: "user",
+        },
         {
           text: "해당 정보를 요약해서 알려드리겠습니다.",
           type: "assistant",
         },
         {
-          text: "요약 제목 : " + detailData.summary_title + "\n요약 내용 : " + detailData.summary_text,
+          text:
+            "요약 제목 : " +
+            detailData.summary_title +
+            "\n요약 내용 : " +
+            detailData.summary_text,
           type: "assistant",
-        }
+        },
       ]);
     }
   }, [detailData]);
@@ -56,26 +73,28 @@ export default function CustomNews({ detailData }: { detailData: CustomNewsType 
           type: "assistant",
         },
         {
-          text: "요약 제목 : " + state.summaryResult.summary_title + "\n요약 내용 : " + state.summaryResult.summary_text,
+          text:
+            "요약 제목 : " +
+            state.summaryResult.summary_title +
+            "\n요약 내용 : " +
+            state.summaryResult.summary_text,
           type: "assistant",
         },
       ]);
-
     } else if (state.error) {
       console.log("Server Action 오류:", state.error);
       setMessages((prev) => [
         ...prev,
         {
-          text: `요약 실패: ${state.error.detail || '알 수 없는 오류'}`,
+          text: `요약 실패: ${state.error.detail || "알 수 없는 오류"}`,
           type: "assistant",
         },
       ]);
     }
   }, [state]);
 
-
   const handleSend = () => {
-    console.log(detailData)
+    console.log(detailData);
     if (message.trim()) {
       setMessages([...messages, { text: message, type: "user" }]);
 
@@ -93,7 +112,6 @@ export default function CustomNews({ detailData }: { detailData: CustomNewsType 
       }
 
       setMessage("");
-
     }
   };
 
@@ -110,7 +128,12 @@ export default function CustomNews({ detailData }: { detailData: CustomNewsType 
       <div className="flex-1 overflow-y-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-end">
-            <button className="px-2 mb-5 py-1 bg-gray-700 text-white rounded-lg cursor-pointer" onClick={() => router.back()}>뒤로가기</button>
+            <button
+              className="px-2 mb-5 py-1 bg-gray-700 text-white rounded-lg cursor-pointer"
+              onClick={() => router.back()}
+            >
+              뒤로가기
+            </button>
           </div>
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
@@ -128,11 +151,14 @@ export default function CustomNews({ detailData }: { detailData: CustomNewsType 
                   className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-2xl px-4 py-3 rounded-2xl ${msg.type === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-100 text-gray-900"
-                      }`}
-                    dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, "<br/><br/>") }}
+                    className={`max-w-2xl px-4 py-3 rounded-2xl ${
+                      msg.type === "user"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-100 text-gray-900"
+                    }`}
+                    dangerouslySetInnerHTML={{
+                      __html: msg.text.replace(/\n/g, "<br/><br/>"),
+                    }}
                   />
                 </div>
               ))}
@@ -170,10 +196,11 @@ export default function CustomNews({ detailData }: { detailData: CustomNewsType 
                 type="button"
                 onClick={handleSend}
                 disabled={!message.trim()}
-                className={`absolute right-3 bottom-2 p-2 rounded-full transition-all ${message.trim()
-                  ? "bg-blue-500 text-white hover:bg-blue-600"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  }`}
+                className={`absolute right-3 bottom-2 p-2 rounded-full transition-all ${
+                  message.trim()
+                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                }`}
                 aria-label="전송"
               >
                 <ArrowUp size={20} />
