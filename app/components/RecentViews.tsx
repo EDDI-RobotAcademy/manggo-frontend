@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useEffect, useRef } from "react";
-
-const recentItems = ["2025.11.22 사회", "2025.11.21 정치", "2025.11.21 IT"];
+import { RecentlyViewedItem } from "./NewsDetail";
+import { useRouter } from "next/navigation";
 
 type WeatherPoint = {
   time: string;
@@ -24,6 +24,8 @@ export default function RecentViews() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const router = useRouter();
+
   const todaySeoul = useMemo(
     () =>
       new Date().toLocaleDateString("sv-SE", {
@@ -31,6 +33,24 @@ export default function RecentViews() {
       }),
     []
   );
+
+  const [recentlyViewedNews, setRecentlyViewedNews] = useState<RecentlyViewedItem[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedNews = localStorage.getItem("recentlyViewedNews");
+      console.log(storedNews);
+      if (storedNews) {
+        try {
+          setRecentlyViewedNews(JSON.parse(storedNews));
+        } catch (e) {
+          console.error("Failed to parse recentlyViewedNews from localStorage", e);
+          setRecentlyViewedNews([]);
+        }
+      }
+    }
+  }, []);
+
 
   const cleanText = (text: string) => text.replace(/\*\*/g, "");
 
@@ -149,22 +169,21 @@ export default function RecentViews() {
           </button>
 
           <div className="space-y-3">
-            {recentItems.map((item, idx) => (
-              <div key={idx} className="pb-3 border-b border-gray-100">
+            {recentlyViewedNews ? recentlyViewedNews.map((item, idx) => (
+              <div key={idx} className="pb-3 border-b border-gray-100" onClick={() => router.push(`/detail?articleId=${item.article_id}&category=${item.category}`)}>
                 <p className="text-sm text-gray-600 hover:text-blue-600 cursor-pointer">
-                  {item}
+                  {item.title}
                 </p>
               </div>
-            ))}
+            )) : null}
           </div>
         </div>
         <div className="p-4 h-[50%]">
           <button
             onClick={fetchTodayWeather}
             disabled={loading}
-            className={`w-full ${
-              loading ? "bg-blue-300" : "bg-blue-600 hover:bg-blue-700"
-            } text-white py-2.5 rounded-lg mb-4 font-medium transition-colors shadow-sm text-sm`}
+            className={`w-full ${loading ? "bg-blue-300" : "bg-blue-600 hover:bg-blue-700"
+              } text-white py-2.5 rounded-lg mb-4 font-medium transition-colors shadow-sm text-sm`}
           >
             오늘 날씨 요약
           </button>
@@ -185,11 +204,10 @@ export default function RecentViews() {
                   <button
                     onClick={playTts}
                     disabled={ttsLoading}
-                    className={`text-xs px-2 py-1 rounded-md border ${
-                      isPlaying
-                        ? "border-blue-600 text-blue-600 bg-white"
-                        : "border-blue-500 text-blue-700 bg-blue-50 hover:bg-blue-100"
-                    } ${ttsLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                    className={`text-xs px-2 py-1 rounded-md border ${isPlaying
+                      ? "border-blue-600 text-blue-600 bg-white"
+                      : "border-blue-500 text-blue-700 bg-blue-50 hover:bg-blue-100"
+                      } ${ttsLoading ? "opacity-60 cursor-not-allowed" : ""}`}
                   >
                     {isPlaying ? "일시정지" : "요약 듣기"}
                   </button>
