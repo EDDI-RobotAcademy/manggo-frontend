@@ -12,7 +12,7 @@ interface Props {
 }
 
 const CATEGORY_FALLBACK_NAME: Record<string, string> = {
-  social: "Social",
+  social: "Society",
   politics: "Politics",
   economy: "Economy",
   entertainment: "Entertainment",
